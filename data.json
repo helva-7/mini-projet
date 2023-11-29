@@ -1,0 +1,134 @@
+{
+    "books": [
+        {
+            "id": 1,
+            "title": "Why we sleep",
+            "author": "Matthew Walker",
+            "editor": "idk",
+            "ISBN": "9780241269060",
+            "num": 89,
+            "year": 2017
+        },
+        {
+            "id": 2,
+            "title": "The Great Gatsby",
+            "author": "F. Scott Fitzgerald",
+            "editor": "Scribner",
+            "ISBN": "9780743273565",
+            "num": 45,
+            "year": 1925
+        },
+        {
+            "id": 3,
+            "title": "To Kill a Mockingbird",
+            "author": "Harper Lee",
+            "editor": "J.B. Lippincott & Co.",
+            "ISBN": "9780061120084",
+            "num": 32,
+            "year": 1960
+        },
+        {
+            "id": 4,
+            "title": "The Catcher in the Rye",
+            "author": "J.D. Salinger",
+            "editor": "Little, Brown and Company",
+            "ISBN": "9780316769480",
+            "num": 50,
+            "year": 1951
+        },
+        {
+            "id": 5,
+            "title": "1984",
+            "author": "George Orwell",
+            "editor": "Secker & Warburg",
+            "ISBN": "9780451524935",
+            "num": 42,
+            "year": 1949
+        },
+        {
+            "id": 6,
+            "title": "Brave New World",
+            "author": "Aldous Huxley",
+            "editor": "Chatto & Windus",
+            "ISBN": "9780060850524",
+            "num": 38,
+            "year": 1932
+        },
+        {
+            "id": 7,
+            "title": "The Hobbit",
+            "author": "J.R.R. Tolkien",
+            "editor": "Allen & Unwin",
+            "ISBN": "9780345339683",
+            "num": 60,
+            "year": 1937
+        },
+        {
+            "id": 8,
+            "title": "One Hundred Years of Solitude",
+            "author": "Gabriel García Márquez",
+            "editor": "Harper & Row",
+            "ISBN": "9780061120084",
+            "num": 30,
+            "year": 1967
+        },
+        {
+            "id": 9,
+            "title": "Pride and Prejudice",
+            "author": "Jane Austen",
+            "editor": "T. Egerton",
+            "ISBN": "9780141439518",
+            "num": 55,
+            "year": 1813
+        }
+    ],
+    "admins": [
+        {
+            "id": 4,
+            "family_name": "Bateman",
+            "name": "Patrick",
+            "email": "bateman.patrick@psycho.com",
+            "username": "american",
+            "password": "psycho"
+        },
+        {
+            "id": 5,
+            "family_name": "Holmes",
+            "name": "Sherlock",
+            "email": "sherlock.holmes@bakerstreet.com",
+            "username": "detective",
+            "password": "elementary"
+        }
+    ], 
+    "students":[
+        {
+            "id": 1,
+            "family_name": "Gojo",
+            "name": "Satoru",
+            "email": "satoru.gojo@jjk.com",
+            "username": "goatjo",
+            "password": "infinity",
+            "books": []
+
+        },
+        {
+            "id": 2,
+            "family_name": "Uzumaki",
+            "name": "Naruto",
+            "email": "naruto.uzumaki@konoha.com",
+            "username": "hokage",
+            "password": "rasengan",
+            "books": []
+
+        },
+        {
+            "id": 3,
+            "family_name": "Granger",
+            "name": "Hermione",
+            "email": "hermione.granger@hogwarts.com",
+            "username": "smartwitch",
+            "password": "books",
+            "books": []
+        }
+    ]
+}
