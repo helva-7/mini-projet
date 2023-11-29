@@ -20,8 +20,13 @@ def borrow_callback(book, user):
     else : 
         st.error("You can't borrow more than 3 books")
 
-
- 
+def return_callback(book, user):
+    returned = user.return_book(book)
+    if returned:    
+        st.success("Book returnedsuccessfuly")
+    else : 
+        st.error("Something went wrong")
+    
 def display_book(book, user):
     st.write(f"Title: {book.title}")
     st.caption(f"Author: {book.author}")
@@ -37,7 +42,7 @@ def display_borrowed_books(user):
                 st.caption(f"Author: {book['book'].author}")
                 st.caption(f"Year: {book['book'].year}")
                 st.caption(f"Deadline: {book['deadline'].strftime('%m/%d/%Y, %H:%M:%S')}")
-                st.button()
+                st.button(f"Return {book['book'].title}", on_click=return_callback, args=(user, book))
 
     else : 
         st.caption("0 books borrowed")
@@ -51,7 +56,7 @@ def student_page(user):
 
     st.header("Overview")
     if len(user.books) > 0:
-        closest_deadline = user.books[0]["deadline"]
+        closest_deadline = user.books[0]["deadline"].strftime('%m/%d/%Y, %H:%M')
     else : closest_deadline = "None"
 
     num_books, time_left = st.columns(2)
