@@ -23,6 +23,7 @@ class User:
     
     def login(self, username, password):
         return self.username == username and self.verify_password(password) 
+    
 
 class Admin(User):
     def __init__(self, id,  name, family_name, email, username, password):
@@ -34,13 +35,15 @@ class Student(User):
         self.books = books
     
     def borrow_book(self, book):
+        print("\nborrowed books: ", self.books)
         if len(self.books) < 3:
             now = datetime.now()
-            deadline = datetime.timedelta(days=7)
+            deadline = timedelta(days=7)
             book = {"book":book,
                     "b_date":now,
-                     "deadline":deadline}
+                     "deadline": now+deadline}
             self.books.append(book)
+
             return True
         else :
             return False
@@ -62,23 +65,30 @@ class DataManager:
         with open(file, 'r') as outfile:
             json_data = json.load(outfile)
         
+        students = []
+        for student_data in json_data["students"]:
+            student_data["books"] = [Book(**book) for book in student_data["books"]]
+            student = Student(**student_data)
+            students.append(student)
+
         data = {
-            "students" : [Student(**student) for student in json_data["students"]], 
-            "admins" : [Admin(**admin) for admin in json_data["admins"]],
-            "books" : [Book(**book) for book in json_data["books"]]
-        } 
+            "students": students,
+            "admins": [Admin(**admin) for admin in json_data["admins"]],
+            "books": [Book(**book) for book in json_data["books"]]
+        }
 
         return data
     
     @staticmethod
     def update_data(file, data):
         new_json_data = {
-            "students" : [vars(student) for student in data["student"]], 
-            "admins" : [vars(**admin) for admin in data["admins"]],
-            "books" : [vars(**book) for book in data["books"]]
+            "books" : [vars(book) for book in data["books"]],
+            "admins" : [vars(admin) for admin in data["admins"]],
+            "students" : [vars(student) for student in data["students"]]
             }
+
         with open(file, 'w') as outfile:
-            json.dump(new_json_data, outfile)
+            json.dump(new_json_data, outfile, indent=4)
 
 
 
