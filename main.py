@@ -1,15 +1,46 @@
 import streamlit as st
 from lib import Admin, Student, Book, DataManager
 
+@st.cache_data
+def load_data():
+    print("data loaded")
+    return DataManager.load_data('data.json')
 
-data = DataManager.load_data('data.json')
+
+if "data" not in st.session_state:
+    st.session_state.data = load_data()
+
+data = st.session_state.data
 
 
-def display_book(book):
+def borrow_callback(book, user):
+    borrowed = user.borrow_book(book)
+    if borrowed:
+        st.success("Book borrowed successfuly")
+    else : 
+        st.error("You can't borrow more than 3 books")
+
+
+ 
+def display_book(book, user):
     st.write(f"Title: {book.title}")
-    st.write(f"Author: {book.author}")
-    st.write(f"Year: {book.year}")
-    borrow = st.button("Borrow", key=book.id)
+    st.caption(f"Author: {book.author}")
+    st.caption(f"Year: {book.year}")
+    st.button(f"Borrow {book.title}", on_click=borrow_callback, args=(book, user))
+
+def display_borrowed_books(user):
+    if len(user.books) > 0:
+        columns = st.columns(len(user.books))
+        for i, book in enumerate(user.books):
+            with columns[i]:
+                st.write(f"Title: {book['book'].title}")
+                st.caption(f"Author: {book['book'].author}")
+                st.caption(f"Year: {book['book'].year}")
+                st.caption(f"Deadline: {book['deadline'].strftime('%m/%d/%Y, %H:%M:%S')}")
+                st.button()
+
+    else : 
+        st.caption("0 books borrowed")
 
 def admin_page(user):
     st.title(f"Welcome {user.name}")
@@ -22,18 +53,15 @@ def student_page(user):
     if len(user.books) > 0:
         closest_deadline = user.books[0]["deadline"]
     else : closest_deadline = "None"
+
     num_books, time_left = st.columns(2)
     num_books.metric("Number of books", f"{len(user.books)}", 3-len(user.books))
     time_left.metric("Deadline", f"{closest_deadline}")
-    # col3.metric("Humidity", "86%", "4%")
+
 
     st.divider()
     st.header("Borrowed books")
-    if len(user.books) > 1:
-        columns = st.columns(len(user.books))
-        for i, book in enumerate(user.books):
-            with columns[i]:
-                display_book(book)
+    display_borrowed_books(user)
                 
 
 
@@ -42,11 +70,11 @@ def student_page(user):
     for i in range(0, len(data["books"]), 3):
         col1, col2, col3 = st.columns(3)
         with col1:
-            display_book(data["books"][i])
+            display_book(data["books"][i], user)
         with col2:
-            display_book(data["books"][i+1])
+            display_book(data["books"][i+1], user)
         with col3:
-            display_book(data["books"][i+2])
+            display_book(data["books"][i+2], user)
         
 def main():
     st.title("Login Screen")
