@@ -23,7 +23,7 @@ def borrow_callback(book, user):
 def return_callback(book, user):
     returned = user.return_book(book)
     if returned:    
-        st.success("Book returnedsuccessfuly")
+        st.success("Book returned successfuly")
     else : 
         st.error("Something went wrong")
     
@@ -42,7 +42,7 @@ def display_borrowed_books(user):
                 st.caption(f"Author: {book['book'].author}")
                 st.caption(f"Year: {book['book'].year}")
                 st.caption(f"Deadline: {book['deadline'].strftime('%m/%d/%Y, %H:%M:%S')}")
-                st.button(f"Return {book['book'].title}", on_click=return_callback, args=(user, book))
+                st.button(f"Return {book['book'].title}", on_click=return_callback, args=(book, user))
 
     else : 
         st.caption("0 books borrowed")
