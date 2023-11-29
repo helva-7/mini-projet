@@ -35,7 +35,6 @@ class Student(User):
         self.books = books
     
     def borrow_book(self, book):
-        print("\nborrowed books: ", self.books)
         if len(self.books) < 3:
             now = datetime.now()
             deadline = timedelta(days=7)
@@ -46,6 +45,12 @@ class Student(User):
 
             return True
         else :
+            return False
+    def return_book(self, book):
+        if book in self.books:
+            self.books.remove(book)
+            return True
+        else : 
             return False
 
 
