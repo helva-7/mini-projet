@@ -5,7 +5,7 @@
 1. Install required Python packages:
 
     ```bash
-    pip install streamlit bcrypt
+    pip install streamlit streamlit-authenticator
     ```
 
 2. Run the Streamlit application:
