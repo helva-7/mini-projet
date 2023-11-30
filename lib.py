@@ -10,7 +10,7 @@ class User:
         self.family_name = family_name
         self.email = email
         self.username = username
-        self.password = self._hash_password(password)
+        self.password = password
         self.email = email
     
     def _hash_password(self, password):
@@ -36,16 +36,19 @@ class Student(User):
     
     def borrow_book(self, book):
         if len(self.books) < 3:
-            now = datetime.now()
-            deadline = timedelta(days=7)
-            book = {"book":book,
-                    "b_date":now,
-                     "deadline": now+deadline}
-            self.books.append(book)
+            if book not in [b['book'] for b in self.books]:
+                now = datetime.now()
+                deadline = timedelta(days=7)
+                book = {"book":book,
+                        "b_date":now,
+                        "deadline": now+deadline}
+                self.books.append(book)
 
-            return True
+                return True
+            else : return "You already borrowed this book"
         else :
-            return False
+            return "You can't borrow more than 3 books"
+        
     def return_book(self, book):
         if book in self.books:
             self.books.remove(book)
@@ -94,6 +97,26 @@ class DataManager:
 
         with open(file, 'w') as outfile:
             json.dump(new_json_data, outfile, indent=4)
+    
+    @staticmethod
+    def get_credentials(data):
+        credentials= {
+            "usernames": {
 
+            }
+        }
+        for user in data['students'] + data['admins']:
 
+            credentials["usernames"][user.username] = {
+                "name": f"{user.name} {user.family_name}",
+                "password" : user.password,
+                "email":user.email
+            }
 
+        return credentials
+    
+    @staticmethod
+    def get_user_by_username(username, data):
+        for student in data["students"]:
+            if student.username == username:
+                return student
