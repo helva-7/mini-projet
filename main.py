@@ -1,40 +1,38 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 
-from lib import DataManager
+from utils import load_data, get_credentials, get_user_by_username
 from student import student_page
+from admin import admin_page
 
 @st.cache_data
-def load_data():
-    return DataManager.load_data('data.json')
+def _load_data():
+    return load_data()
 
 if "data" not in st.session_state:
-    st.session_state.data = load_data()
+    st.session_state.data = _load_data()
 
 data = st.session_state.data
 
 
-credentials = DataManager.get_credentials(data)
+credentials = get_credentials(data)
 
 
-authenticator = stauth.Authenticate(credentials, 'user_dashboard', 'abcdef', cookie_expiry_days=30)
+authenticator = stauth.Authenticate(credentials, 'user_dashboard', 'abcdef', cookie_expiry_days=1)
 
 name, authentication_status, username = authenticator.login('Login', 'main')
 
 
 if authentication_status:
     authenticator.logout('Logout', 'main')
-    user = DataManager.get_user_by_username(username, data)
+    user, type = get_user_by_username(data, username)
 
-    if username in [student.username for student  in data['students']]:
+    if type == 'student':
         student_page(user, data)
-    elif username in [admin.username for admin  in data['admins']]:
-        pass
+    elif type == 'admin':   
+        admin_page(user, data)
 
-        st.write(f'Welcome *{name}*')
-        st.title('Dashboard')
-
-elif not authentication_status:
+elif authentication_status == False:
     st.error('Username/password is incorrect')
 elif authentication_status == None:
     st.warning('Please enter your username and password')
