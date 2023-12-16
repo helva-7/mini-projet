@@ -139,5 +139,4 @@ def get_user_by_id(data, id):
 			return user
 	
 def is_valid_email(email):
-    # Basic email validation using a simple regex
     return bool(re.match(r"[^@]+@[^@]+\.[^@]+", email))
