@@ -1,41 +1,55 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 import pandas as pd
+import re
 
-
-from utils import is_past_deadline, save_data
+from utils import is_past_deadline, save_data, get_overdue_books, get_user_by_id, suspend_user, is_valid_email
 
 def display_expired_deadlines(data):
     late_students = []
     for student in data['students']:
         if is_past_deadline(student):
             add_student = student.copy()
-            add_student.pop('password', None)
+            add_student.pop('password')
+            add_student['books'] = get_overdue_books(student)
             late_students.append(add_student)
 
     if len(late_students)>0:
         df = pd.DataFrame(late_students)
         # Add a new column 'Borrowed Books' to the DataFrame
-        df['books'] = df['books'].apply(lambda books: [book['book']['title'] for book in books])
+        df['overdue books'] = df['books'].apply(lambda books: [book['book']['title'] for book in books])
         # Display the DataFrame
-        st.dataframe(df[['name', 'family_name','username', 'email', 'books']])
+        st.dataframe(df[['name', 'family_name','username', 'email', 'overdue books']])
     else:
         st.write("No overdue deadline")
 
 def display_students(data):
     st.subheader("Students")
-    students = []
-    for student in data['students']:
-        add_student = student.copy()
-        add_student.pop('password', None)
-        students.append(add_student)
-
-    if len(students)>0:
+    students = data.get('students', [])
+    
+    if len(students) > 0:
         df = pd.DataFrame(students)
         df['books'] = df['books'].apply(lambda books: [book['book']['title'] for book in books])
-        # Display the DataFrame
-        st.dataframe(df[['name', 'family_name','username', 'email', 'books']])
-    else : 
+
+        st.dataframe(df[['id', 'name', 'family_name', 'username', 'email', 'books']])
+
+        user_id_to_suspend = st.text_input("Enter User ID to suspend:", key='id_field')
+
+        if user_id_to_suspend != '':
+            user_id_to_suspend = re.sub(r'\D', '', user_id_to_suspend)
+            user_id_to_suspend = int(user_id_to_suspend)
+
+        suspend_button = st.button("Suspend User", key='suspend')
+
+        # Handle button click event
+        if suspend_button and user_id_to_suspend:
+            user_to_suspend = get_user_by_id(data, user_id_to_suspend)
+            if user_to_suspend is not None:
+                suspend_user(data, user_to_suspend)
+                st.success(f"User with ID {user_id_to_suspend} suspended successfully.")
+            else:
+                st.warning(f"User with ID {user_id_to_suspend} not found.")
+    else:
         st.write("No student account")
 
 
@@ -47,9 +61,11 @@ def create_new_student_account(data):
     new_student_username = st.text_input("student username:")
     new_student_password = st.text_input("student password:", type="password")
     
+    if not is_valid_email(new_student_email):
+        st.error("Please enter a valid email address.")
+        return
+
     if st.button("Create Account"):
-        # Replace this with your code to add the new student to the data dictionary
-        # For example, you might want to generate a unique ID for the new student
         new_student_id = len(data['students']) + 1
         new_student = {
             "id": new_student_id,
@@ -88,5 +104,6 @@ def admin_page(user, data):
     st.header("Manage Borrowed Books")
     book_expander = st.expander("Expand", expanded=True)
     with book_expander:
-        display_students(data)
-
+        st.write('available soon')
+        # display_students(data)
+        # add book
