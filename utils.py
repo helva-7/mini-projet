@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timedelta
+import re
 
 def json_datetime_hook(dct):
     for key, value in dct.items():
@@ -21,7 +22,6 @@ def json_serial(obj):
     raise TypeError("Type not serializable")
 
 def load_data():
-	# global data
 	with open('data.json', 'r') as outfile:
 		data = json.load(outfile, object_hook=json_datetime_hook) 
 	
@@ -30,7 +30,7 @@ def load_data():
 def save_data(data):
 	with open('data.json', 'w', encoding='utf8') as outfile:
 		json.dump(data, outfile, indent=4 , default=json_serial)
-	data = load_data()	
+	# data = load_data()	
 
 def update_student(data, user):
 	for student in data['students']:
@@ -80,18 +80,31 @@ def is_past_deadline(student):
 	if closest_deadline == None : return False
 	else : return now > closest_deadline
 
+def get_overdue_books(student):
+	now = datetime.now()
+	overdue_books = []
+	for book in student['books']:
+		if now > book['deadline']: overdue_books.append(book)
+
+	return overdue_books
+
+
 def borrow_book(data, book, user):
-	if len(user['books']) < 3:
+	
+	if book["num"] == 0 : return "Book unavailable"
+	
+	if len(user['books']) < 3 :
 		if book not in [b['book'] for b in user['books']]:
 			now = datetime.now()
 			deadline = timedelta(days=7)
+			book["num"] -= 1
 			book = {"book":book,
 					"b_date":now,
 					"deadline": now+deadline}
 			user['books'].append(book)
 
-			update_student(data, user)
-		
+			save_data(data)
+
 			return True
 		else : return "You already borrowed this book"
 	else :
@@ -102,6 +115,29 @@ def return_book(data, user, book):
 	for b in user['books']:
 		if b == book:
 			user['books'].remove(b)  # Remove the specific book, not the entire dictionary
-			update_student(data, user)
+			#updating books
+			for i in data['books']:
+				if i == book['book']: 
+					i['num']+=1
+					break
+				
+			save_data(data)
 			return True
 	return "Book not found in user's borrowed books"
+
+
+def suspend_user(data, user_to_suspend):
+	for student in data['students']:
+		if student == user_to_suspend:
+			data['students'].remove(student)
+
+	save_data(data)
+
+def get_user_by_id(data, id):
+	for user in data['students']:
+		if user['id'] == id:
+			return user
+	
+def is_valid_email(email):
+    # Basic email validation using a simple regex
+    return bool(re.match(r"[^@]+@[^@]+\.[^@]+", email))
