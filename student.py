@@ -37,7 +37,7 @@ def display_book(data, book, user):
     st.write(f"Title: {book['title']}")
     st.caption(f"Author: {book['author']}")
     st.caption(f"Year: {book['year']}")
-    st.button(f"Borrow {book['title']}", on_click=borrow_callback, args=(data, book, user), key=	book['ISBN'])
+    st.button(f"Borrow {book['title']}", on_click=borrow_callback, args=(data, book, user), key=book['ISBN'])
 
 def student_page(user, data):
     st.title(f"Welcome {user['name']}")
