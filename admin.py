@@ -33,11 +33,7 @@ def display_students(data):
 
         st.dataframe(df[['id', 'name', 'family_name', 'username', 'email', 'books']])
 
-        user_id_to_suspend = st.text_input("Enter User ID to suspend:", key='id_field')
-
-        if user_id_to_suspend != '':
-            user_id_to_suspend = re.sub(r'\D', '', user_id_to_suspend)
-            user_id_to_suspend = int(user_id_to_suspend)
+        user_id_to_suspend = st.number_input("Enter User ID to suspend:",min_value=1, max_value=len(students), step=1, format='%d',  key='id_field')
 
         suspend_button = st.button("Suspend User", key='suspend')
 
@@ -52,6 +48,16 @@ def display_students(data):
     else:
         st.write("No student account")
 
+def display_book(data, book):
+    st.write(f"Title: {book['title']}")
+    st.caption(f"Author: {book['author']}")
+    st.caption(f"Year: {book['year']}")
+    updated_books_available = st.number_input(f"Number of copies",min_value=0, value=book['num'], step=1, format='%d', key=book['ISBN'])
+    if st.button(f"Update {book['title']}"):
+        book['num'] = updated_books_available
+        save_data(data)
+        st.success("Number of books available updated successfully.")
+
 
 def create_new_student_account(data):
     st.subheader("Create New Student Account")
@@ -62,7 +68,7 @@ def create_new_student_account(data):
     new_student_password = st.text_input("student password:", type="password")
     
     if not is_valid_email(new_student_email):
-        st.error("Please enter a valid email address.")
+        st.warning("Please enter a valid email address.")
         return
 
     if st.button("Create Account"):
@@ -79,6 +85,32 @@ def create_new_student_account(data):
         data['students'].append(new_student)
         save_data(data)
         st.success("New student account created successfully!")
+
+def add_new_book(data):
+    st.subheader("Add New Book")
+    new_book_title = st.text_input("Book Title:")
+    new_book_author = st.text_input("Book Author:")
+    new_book_editor = st.text_input("Book Editor:")
+    new_book_ISBN = st.text_input("ISBN:")
+    new_book_num = st.number_input("Number of Copies:", min_value=0, step=1)
+    new_book_year = st.number_input("Year:", min_value=1800, step=1)
+
+    if st.button("add book"):
+        new_book_id = len(data['books']) + 1
+
+        new_book = {
+        "id": new_book_id,
+        "title": new_book_title,
+        "author": new_book_author,
+        "editor": new_book_editor,
+        "ISBN": new_book_ISBN,
+        "num": new_book_num,
+        "year": new_book_year
+        }
+        data['books'].append(new_book)
+        save_data(data)
+        st.success("New book added successfully!")
+
 
 def admin_page(user, data):
     st.title(f"Welcome {user['name']}")
@@ -102,8 +134,17 @@ def admin_page(user, data):
     
     st.divider()
     st.header("Manage Borrowed Books")
-    book_expander = st.expander("Expand", expanded=True)
+    book_expander = st.expander("Library", expanded=True)
     with book_expander:
-        st.write('available soon')
-        # display_students(data)
-        # add book
+        for i in range(0, len(data["books"]), 3):
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                display_book(data, data["books"][i])
+            with col2:
+                display_book(data, data["books"][i+1])
+            with col3:
+                display_book(data, data["books"][i+2])
+    
+    new_book_expander = st.expander("new book", expanded=True)
+    with new_book_expander:
+        add_new_book(data)
