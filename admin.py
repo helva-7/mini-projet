@@ -32,7 +32,7 @@ def display_students(data):
 
         st.dataframe(df[['id', 'name', 'family_name', 'username', 'email', 'books']])
 
-        user_id_to_suspend = st.number_input("Enter User ID to suspend:",min_value=1, max_value=generate_student_id(data), step=1, format='%d',  key='id_field')
+        user_id_to_suspend = st.number_input("Enter User ID to suspend:",min_value=1, max_value=generate_student_id(data)-1, step=1, format='%d',  key='id_field')
 
 
         suspend_button = st.button("Suspend User", key='suspend')
