@@ -1,9 +1,8 @@
 import streamlit as st
 import streamlit_authenticator as stauth
 import pandas as pd
-import re
 
-from utils import is_past_deadline, save_data, get_overdue_books, get_user_by_id, suspend_user, is_valid_email
+from utils import is_past_deadline, save_data, get_overdue_books, get_user_by_id, suspend_user, is_valid_email, generate_student_id
 
 def display_expired_deadlines(data):
     late_students = []
@@ -72,7 +71,7 @@ def create_new_student_account(data):
         return
 
     if st.button("Create Account"):
-        new_student_id = len(data['students']) + 1
+        new_student_id = generate_student_id(data)
         new_student = {
             "id": new_student_id,
             "name": new_student_name,
