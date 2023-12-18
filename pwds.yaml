@@ -1,0 +1,21 @@
+students:
+  - name: Naruto Uzumaki
+    username: hokage
+    password: rasengan
+
+  - name: Satoru Gojo
+    username: goatjo
+    password: infinity
+
+  - name: Hermione Granger
+    username: smartwitch
+    password: books
+
+admins:
+  - name: Patrick Bateman
+    username: american
+    password: psycho
+
+  - name: Sherlock Holmes
+    username: detective
+    password: elementary
