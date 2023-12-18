@@ -140,3 +140,7 @@ def get_user_by_id(data, id):
 	
 def is_valid_email(email):
     return bool(re.match(r"[^@]+@[^@]+\.[^@]+", email))
+
+
+def generate_student_id(data):
+	return max([student['id'] for student in data['students']]) + 1
